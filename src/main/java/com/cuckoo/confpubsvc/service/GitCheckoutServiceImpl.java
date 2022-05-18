@@ -22,11 +22,9 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 
 @Service
-public class GitCheckoutServiceImpl {
+public class GitCheckoutServiceImpl implements ScmCheckoutService{
 
-	public void checkout() {
-		
-	}
+
 	
 	public void cloneRepository() throws IOException, InvalidRemoteException, TransportException, GitAPIException {
 		File workingDir = Files.createTempDirectory("workspace").toFile();
@@ -36,8 +34,12 @@ public class GitCheckoutServiceImpl {
 		Git git = Git.cloneRepository()
 		        .setDirectory(workingDir)
 		        .setTransportConfigCallback(transportConfigCallback)
-		        .setURI("ssh://example.com/repo.git")
+		        .setURI("git@github.com:shijujohn1093/conf-pub-svc.git")
 		        .call();
+		for(String file : workingDir.list()) {
+			System.out.println("------------>"+file);
+		}
+		
 	}
 	private static class SshTransportConfigCallback implements TransportConfigCallback {
 
@@ -50,7 +52,12 @@ public class GitCheckoutServiceImpl {
 	        @Override
 	        protected JSch createDefaultJSch(FS fs) throws JSchException {
 	            JSch jSch = super.createDefaultJSch(fs);
-	            jSch.addIdentity("/path/to/key", "super-secret-passphrase".getBytes());
+//	            jSch.addIdentity("C:/Users/shiju/.ssh/id_ecdsa",  "pass phrase used".getBytes());	           
+	            jSch.addIdentity("<path to ssh>/.ssh/id_ecdsa");
+
+//	            jSch.addIdentity("C:/Users/shiju/.ssh", "".getBytes());
+//	            jSch.addIdentity("C:\\workspace", "".getBytes());
+	            
 	            return jSch;
 	        }
 	    };
